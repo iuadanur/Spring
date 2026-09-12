@@ -42,4 +42,9 @@ public class JobApplicationService {
         
         return null;
     }
+    public boolean deleteApplication(Long id){
+            return applications.removeIf(
+            application -> application.getId().equals(id)
+        );
+    }
 }
