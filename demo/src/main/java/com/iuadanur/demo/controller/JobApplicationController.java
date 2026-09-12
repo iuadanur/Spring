@@ -10,6 +10,7 @@ import java.util.List;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -32,5 +33,12 @@ public class JobApplicationController {
     @GetMapping("/{id}")
     public JobApplication getApplicationById(@PathVariable Long id) {
         return jobApplicationService.getApplicationById(id);
+    }
+    @PutMapping("/{id}")
+    public JobApplication updateApplication(
+            @PathVariable Long id,
+            @RequestBody JobApplication application) {
+            
+        return jobApplicationService.updateApplication(id, application);
     }
 }

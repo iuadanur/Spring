@@ -29,4 +29,17 @@ public class JobApplicationService {
 
         return null;
     }
+    public JobApplication updateApplication(Long id, JobApplication updatedApplication)     {
+            for (JobApplication application : applications) {
+            if (application.getId().equals(id)) {
+              application.setCompany(updatedApplication.getCompany());
+              application.setPosition(updatedApplication.getPosition());
+              application.setStatus(updatedApplication.getStatus());
+            
+              return application;
+            }
+            }
+        
+        return null;
+    }
 }
