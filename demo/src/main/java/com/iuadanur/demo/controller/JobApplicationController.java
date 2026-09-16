@@ -1,10 +1,5 @@
 package com.iuadanur.demo.controller;
 
-import org.springframework.web.bind.annotation.RestController;
-
-import com.iuadanur.demo.model.JobApplication;
-import com.iuadanur.demo.service.JobApplicationService;
-
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
@@ -16,63 +11,104 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-@RestController 
+import com.iuadanur.demo.dto.JobApplicationRequest;
+import com.iuadanur.demo.dto.JobApplicationResponse;
+import com.iuadanur.demo.model.JobApplication;
+import com.iuadanur.demo.service.JobApplicationService;
+
+@RestController
 @RequestMapping("/applications")
 public class JobApplicationController {
+
     private final JobApplicationService jobApplicationService;
 
     public JobApplicationController(JobApplicationService jobApplicationService) {
-    this.jobApplicationService = jobApplicationService;
+        this.jobApplicationService = jobApplicationService;
     }
+
     @GetMapping
-    public List<JobApplication> getAllApplications() {
-        return jobApplicationService.getAllApplications();
+    public List<JobApplicationResponse> getAllApplications() {
+        return jobApplicationService
+                .getAllApplications()
+                .stream()
+                .map(this::toResponse)
+                .toList();
     }
-    @PostMapping
-    public ResponseEntity<JobApplication> addApplication(
-            @RequestBody JobApplication application) {
 
-        JobApplication createdApplication =
-                jobApplicationService.addApplication(application);
-
-        return ResponseEntity
-                .status(HttpStatus.CREATED)
-                .body(createdApplication);
-    }
     @GetMapping("/{id}")
-    public ResponseEntity<JobApplication> getApplicationById(@PathVariable Long id) {
-        JobApplication application = jobApplicationService.getApplicationById(id);
+    public ResponseEntity<JobApplicationResponse> getApplicationById(
+            @PathVariable Long id) {
+
+        JobApplication application =
+                jobApplicationService.getApplicationById(id);
 
         if (application == null) {
             return ResponseEntity.notFound().build();
         }
 
-        return ResponseEntity.ok(application);
+        return ResponseEntity.ok(toResponse(application));
     }
-    @PutMapping("/{id}")
-    public ResponseEntity<JobApplication> updateApplication(
-            @PathVariable Long id,
-            @RequestBody JobApplication application) {
 
-        JobApplication updatedApplication =
+    @PostMapping
+    public ResponseEntity<JobApplicationResponse> addApplication(
+            @RequestBody JobApplicationRequest request) {
+
+        JobApplication application = new JobApplication();
+
+        application.setCompany(request.getCompany());
+        application.setPosition(request.getPosition());
+        application.setStatus(request.getStatus());
+
+        JobApplication created =
+                jobApplicationService.addApplication(application);
+
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(toResponse(created));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<JobApplicationResponse> updateApplication(
+            @PathVariable Long id,
+            @RequestBody JobApplicationRequest request) {
+
+        JobApplication application = new JobApplication();
+
+        application.setCompany(request.getCompany());
+        application.setPosition(request.getPosition());
+        application.setStatus(request.getStatus());
+
+        JobApplication updated =
                 jobApplicationService.updateApplication(id, application);
 
-        if (updatedApplication == null) {
+        if (updated == null) {
             return ResponseEntity.notFound().build();
         }
 
-        return ResponseEntity.ok(updatedApplication);
+        return ResponseEntity.ok(toResponse(updated));
     }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteApplication(@PathVariable Long id) {
 
-        boolean deleted = jobApplicationService.deleteApplication(id);
+        boolean deleted =
+                jobApplicationService.deleteApplication(id);
 
         if (!deleted) {
             return ResponseEntity.notFound().build();
         }
 
         return ResponseEntity.noContent().build();
+    }
+
+    private JobApplicationResponse toResponse(JobApplication application) {
+        return new JobApplicationResponse(
+                application.getId(),
+                application.getCompany(),
+                application.getPosition(),
+                application.getStatus()
+        );
     }
 }
