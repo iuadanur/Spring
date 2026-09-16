@@ -18,6 +18,8 @@ import com.iuadanur.demo.dto.JobApplicationResponse;
 import com.iuadanur.demo.model.JobApplication;
 import com.iuadanur.demo.service.JobApplicationService;
 
+import jakarta.validation.Valid;
+
 @RestController
 @RequestMapping("/applications")
 public class JobApplicationController {
@@ -53,7 +55,7 @@ public class JobApplicationController {
 
     @PostMapping
     public ResponseEntity<JobApplicationResponse> addApplication(
-            @RequestBody JobApplicationRequest request) {
+            @Valid @RequestBody JobApplicationRequest request) {
 
         JobApplication application = new JobApplication();
 
@@ -72,7 +74,7 @@ public class JobApplicationController {
     @PutMapping("/{id}")
     public ResponseEntity<JobApplicationResponse> updateApplication(
             @PathVariable Long id,
-            @RequestBody JobApplicationRequest request) {
+            @Valid @RequestBody JobApplicationRequest request) {
 
         JobApplication application = new JobApplication();
 
