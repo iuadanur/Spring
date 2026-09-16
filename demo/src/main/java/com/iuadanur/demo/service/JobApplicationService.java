@@ -6,45 +6,52 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import com.iuadanur.demo.model.JobApplication;
+import com.iuadanur.demo.repository.JobApplicationRepository;
 
 @Service 
 public class JobApplicationService {
     
-    private final List<JobApplication> applications = new ArrayList<>();
+    private final JobApplicationRepository jobApplicationRepository;
+
+    public JobApplicationService(JobApplicationRepository jobApplicationRepository) {
+        this.jobApplicationRepository = jobApplicationRepository;
+    }
 
     public List<JobApplication> getAllApplications() {
-        return applications;
+        return jobApplicationRepository.findAll();
+    }
+
+    public JobApplication getApplicationById(Long id) {
+        return jobApplicationRepository.findById(id).orElse(null);
     }
 
     public JobApplication addApplication(JobApplication application) {
-        applications.add(application);
-        return application;
+        return jobApplicationRepository.save(application);
     }
-    public JobApplication getApplicationById(Long id) {
-        for (JobApplication application : applications) {
-            if (application.getId().equals(id)) {
-                return application;
-            }
+
+    public JobApplication updateApplication(Long id, JobApplication updatedApplication) {
+
+        JobApplication application =
+                jobApplicationRepository.findById(id).orElse(null);
+
+        if (application == null) {
+            return null;
         }
 
-        return null;
+        application.setCompany(updatedApplication.getCompany());
+        application.setPosition(updatedApplication.getPosition());
+        application.setStatus(updatedApplication.getStatus());
+
+        return jobApplicationRepository.save(application);
     }
-    public JobApplication updateApplication(Long id, JobApplication updatedApplication)     {
-            for (JobApplication application : applications) {
-            if (application.getId().equals(id)) {
-              application.setCompany(updatedApplication.getCompany());
-              application.setPosition(updatedApplication.getPosition());
-              application.setStatus(updatedApplication.getStatus());
-            
-              return application;
-            }
-            }
-        
-        return null;
-    }
-    public boolean deleteApplication(Long id){
-            return applications.removeIf(
-            application -> application.getId().equals(id)
-        );
+
+    public boolean deleteApplication(Long id) {
+
+        if (!jobApplicationRepository.existsById(id)) {
+            return false;
+        }
+
+        jobApplicationRepository.deleteById(id);
+        return true;
     }
 }
