@@ -1,16 +1,16 @@
 package com.iuadanur.demo.service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import com.iuadanur.demo.exception.ResourceNotFoundException;
 import com.iuadanur.demo.model.JobApplication;
 import com.iuadanur.demo.repository.JobApplicationRepository;
 
-@Service 
+@Service
 public class JobApplicationService {
-    
+
     private final JobApplicationRepository jobApplicationRepository;
 
     public JobApplicationService(JobApplicationRepository jobApplicationRepository) {
@@ -22,21 +22,23 @@ public class JobApplicationService {
     }
 
     public JobApplication getApplicationById(Long id) {
-        return jobApplicationRepository.findById(id).orElse(null);
+        return jobApplicationRepository.findById(id)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException(
+                                "Job application not found with id: " + id
+                        )
+                );
     }
 
     public JobApplication addApplication(JobApplication application) {
         return jobApplicationRepository.save(application);
     }
 
-    public JobApplication updateApplication(Long id, JobApplication updatedApplication) {
+    public JobApplication updateApplication(
+            Long id,
+            JobApplication updatedApplication) {
 
-        JobApplication application =
-                jobApplicationRepository.findById(id).orElse(null);
-
-        if (application == null) {
-            return null;
-        }
+        JobApplication application = getApplicationById(id);
 
         application.setCompany(updatedApplication.getCompany());
         application.setPosition(updatedApplication.getPosition());
@@ -45,13 +47,9 @@ public class JobApplicationService {
         return jobApplicationRepository.save(application);
     }
 
-    public boolean deleteApplication(Long id) {
+    public void deleteApplication(Long id) {
+        JobApplication application = getApplicationById(id);
 
-        if (!jobApplicationRepository.existsById(id)) {
-            return false;
-        }
-
-        jobApplicationRepository.deleteById(id);
-        return true;
+        jobApplicationRepository.delete(application);
     }
 }
