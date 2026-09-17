@@ -11,4 +11,6 @@ public interface JobApplicationRepository
         extends JpaRepository<JobApplication, Long> {
 
     List<JobApplication> findByStatus(ApplicationStatus status);
+
+    List<JobApplication> findByCompanyContainingIgnoreCase(String company);
 }

@@ -34,7 +34,12 @@ public class JobApplicationService {
     public List<JobApplication> getApplicationsByStatus(ApplicationStatus status) {
         return jobApplicationRepository.findByStatus(status);
     }
-    
+
+    public List<JobApplication> searchByCompany(String company) {
+        return jobApplicationRepository
+                .findByCompanyContainingIgnoreCase(company);
+    }
+
     public JobApplication addApplication(JobApplication application) {
         return jobApplicationRepository.save(application);
     }

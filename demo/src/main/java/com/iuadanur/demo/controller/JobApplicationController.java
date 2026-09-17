@@ -34,14 +34,20 @@ public class JobApplicationController {
 
     @GetMapping
     public List<JobApplicationResponse> getAllApplications(
-            @RequestParam(required = false) ApplicationStatus status) {
+            @RequestParam(required = false) ApplicationStatus status,
+            @RequestParam(required = false) String company) {
             
         List<JobApplication> applications;
             
-        if (status == null) {
-            applications = jobApplicationService.getAllApplications();
+        if (status != null) {
+            applications =
+                    jobApplicationService.getApplicationsByStatus(status);
+        } else if (company != null) {
+            applications =
+                    jobApplicationService.searchByCompany(company);
         } else {
-            applications = jobApplicationService.getApplicationsByStatus(status);
+            applications =
+                    jobApplicationService.getAllApplications();
         }
     
         return applications
