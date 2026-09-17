@@ -39,13 +39,24 @@ public class JobApplicationController {
             
         List<JobApplication> applications;
             
-        if (status != null) {
+        if (status != null && company != null) {
+        
+            applications =
+                    jobApplicationService
+                            .getApplicationsByStatusAndCompany(status, company);
+        
+        } else if (status != null) {
+        
             applications =
                     jobApplicationService.getApplicationsByStatus(status);
+        
         } else if (company != null) {
+        
             applications =
                     jobApplicationService.searchByCompany(company);
+        
         } else {
+        
             applications =
                     jobApplicationService.getAllApplications();
         }

@@ -35,6 +35,14 @@ public class JobApplicationService {
         return jobApplicationRepository.findByStatus(status);
     }
 
+    public List<JobApplication> getApplicationsByStatusAndCompany(
+            ApplicationStatus status,
+            String company) {
+
+        return jobApplicationRepository
+                .findByStatusAndCompanyContainingIgnoreCase(status, company);
+    }
+    
     public List<JobApplication> searchByCompany(String company) {
         return jobApplicationRepository
                 .findByCompanyContainingIgnoreCase(company);
