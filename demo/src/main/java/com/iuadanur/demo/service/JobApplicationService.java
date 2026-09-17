@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import com.iuadanur.demo.exception.ResourceNotFoundException;
+import com.iuadanur.demo.model.ApplicationStatus;
 import com.iuadanur.demo.model.JobApplication;
 import com.iuadanur.demo.repository.JobApplicationRepository;
 
@@ -30,6 +31,10 @@ public class JobApplicationService {
                 );
     }
 
+    public List<JobApplication> getApplicationsByStatus(ApplicationStatus status) {
+        return jobApplicationRepository.findByStatus(status);
+    }
+    
     public JobApplication addApplication(JobApplication application) {
         return jobApplicationRepository.save(application);
     }

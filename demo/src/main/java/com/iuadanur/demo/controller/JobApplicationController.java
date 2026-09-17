@@ -11,10 +11,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.iuadanur.demo.dto.JobApplicationRequest;
 import com.iuadanur.demo.dto.JobApplicationResponse;
+import com.iuadanur.demo.model.ApplicationStatus;
 import com.iuadanur.demo.model.JobApplication;
 import com.iuadanur.demo.service.JobApplicationService;
 
@@ -31,9 +33,18 @@ public class JobApplicationController {
     }
 
     @GetMapping
-    public List<JobApplicationResponse> getAllApplications() {
-        return jobApplicationService
-                .getAllApplications()
+    public List<JobApplicationResponse> getAllApplications(
+            @RequestParam(required = false) ApplicationStatus status) {
+            
+        List<JobApplication> applications;
+            
+        if (status == null) {
+            applications = jobApplicationService.getAllApplications();
+        } else {
+            applications = jobApplicationService.getApplicationsByStatus(status);
+        }
+    
+        return applications
                 .stream()
                 .map(this::toResponse)
                 .toList();
