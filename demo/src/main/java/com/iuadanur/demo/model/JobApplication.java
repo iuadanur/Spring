@@ -25,7 +25,7 @@ public class JobApplication {
     public JobApplication() {
     }
 
-    JobApplication(Long id, String company, String position, ApplicationStatus status) {
+    public JobApplication(Long id, String company, String position, ApplicationStatus status) {
         this.id = id;
         this.company = company;
         this.position = position;
